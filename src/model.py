@@ -2,6 +2,7 @@ import os
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -39,11 +40,12 @@ class ChatModel:
     def generate(self, question: str, context: str = None, max_new_tokens: int = 250):
 
         if context == None or context == "":
-            prompt = f"""Give a detailed answer to the following question. Question: {question}"""
-        else:
-            prompt = f"""Using the information contained in the context, give a detailed answer to the question.
-Context: {context}.
-Question: {question}"""
+            prompt = f"""Return only one paraphrased version of the given question using synonymous words: {
+                question}"""
+#         else:
+#             prompt = f"""Using the information contained in the context, give a detailed answer to the question. Even if the context doesn't have the required information. Answer to the best of your abilities.
+# Context: {context}.
+# Question: {question}"""
 
         chat = [{"role": "user", "content": prompt}]
         formatted_prompt = self.tokenizer.apply_chat_template(
@@ -62,7 +64,8 @@ Question: {question}"""
                 do_sample=False,
             )
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=False)
-        response = response[len(formatted_prompt) :]  # remove input prompt from reponse
+        # remove input prompt from reponse
+        response = response[len(formatted_prompt):]
         response = response.replace("<eos>", "")  # remove eos token
 
         return response

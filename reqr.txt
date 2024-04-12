@@ -1,0 +1,12 @@
+python-dotenv==1.0.*
+transformers==4.39.*
+bitsandbytes
+accelerate
+pypdf==4.1.*
+tiktoken==0.6.*
+sentence-transformers==2.5.*
+faiss-cpu==1.8.*
+langchain==0.1.13
+streamlit==1.29.*
+FastAPI==0.68.1
+uvicorn==0.29.0
