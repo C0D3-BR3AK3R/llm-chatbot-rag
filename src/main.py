@@ -1,12 +1,15 @@
 import uvicorn
-from fastapi import FastAPI
-import joblib
-from typing import List  # type: ignore
-from model import ChatModel
 import re  # type: ignore
-import rag_util
+from typing import List  # type: ignore
+
+from fastapi import FastAPI, Depends
+from fastapi_health import health
+
+from model import ChatModel
 
 app = FastAPI()
+
+has_model_loaded = bool()
 
 
 @app.get('/')
@@ -31,7 +34,14 @@ def preprocess_paraphrased_question(input_string, original_question):
 
 def load_model():
     model = ChatModel(model_id="google/gemma-2b-it", device="cuda")
+    global has_model_loaded
+    has_model_loaded = True
     return model
+
+
+def is_model_online(session: bool = has_model_loaded):
+    # Ye script chalegi matlab model is online.
+    return session
 
 
 model = load_model()
@@ -47,6 +57,18 @@ async def paraphrase(question: List[str]):
             "question": question,
             "non_regex_para": para_q_o,
             }
+
+
+@app.get("/health")
+def check_health(online_status: bool = has_model_loaded):
+    """
+    Endpoint to check the health status of the model.
+    """
+    if online_status:
+        return {"status": "Model is online"}
+    else:
+        return {"status": "Model is offline"}
+
 
 if __name__ == '__main__':
     uvicorn.run(app, port=8000, host='127.0.0.1')
