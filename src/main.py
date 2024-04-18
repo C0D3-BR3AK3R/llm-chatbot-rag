@@ -4,17 +4,38 @@ from typing import List  # type: ignore
 
 from fastapi import FastAPI, Depends
 from fastapi_health import health
+from fastapi.middleware.cors import CORSMiddleware
 
 from model import ChatModel
 
 app = FastAPI()
+
+# Configure CORS
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:8000",
+    "http://localhost:5173",
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    # Change "*" to the appropriate origin URL of your ReactJS frontend
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 has_model_loaded = bool()
 
 
 @app.get('/')
 def index():
-    return {'message': 'NER API'}
+    return {'message': 'Paraphraser API'}
 
 
 def preprocess_paraphrased_question(input_string, original_question):
