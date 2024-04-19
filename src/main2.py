@@ -17,11 +17,20 @@ class Question(BaseModel):
 app = FastAPI()
 
 # Configure CORS
+origins = [
+    # "http://localhost.tiangolo.com",
+    # "https://localhost.tiangolo.com",
+    # "http://localhost",
+    # "http://localhost:8080",
+    # "http://localhost:8000",
+    # "http://localhost:5173",
+    "*"
+]
 
 app.add_middleware(
     CORSMiddleware,
     # Change "*" to the appropriate origin URL of your ReactJS frontend
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
@@ -75,17 +84,6 @@ async def paraphrase(question: Question):
             "question": question,
             "non_regex_para": para_q_o,
             }
-
-
-@app.post("/gemma-chat")
-async def gemma_chat(question: Question):
-    print("QUESTION:", question)
-    ans = model.generate(question=question, mode='qna')
-    print("ANSWER:", ans)
-    return {
-        "question": question,
-        "paraphrased_question": ans
-    }
 
 
 @app.get("/health")

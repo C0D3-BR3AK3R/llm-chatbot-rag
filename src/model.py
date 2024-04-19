@@ -37,10 +37,14 @@ class ChatModel:
         self.chat = []
         self.device = device
 
-    def generate(self, question: str, context: str = None, max_new_tokens: int = 250):
+    def generate(self, question: str, context: str = None, max_new_tokens: int = 250, mode: str = 'paraphrase'):
 
-        if context == None or context == "":
+        if mode == 'paraphrase':
             prompt = f"""Return only one paraphrased version of the given question using synonymous words: {
+                question}"""
+
+        elif mode == 'qna':
+            prompt = f"""Answer the give question in under 70 words: {
                 question}"""
 #         else:
 #             prompt = f"""Using the information contained in the context, give a detailed answer to the question. Even if the context doesn't have the required information. Answer to the best of your abilities.
