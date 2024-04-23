@@ -84,7 +84,7 @@ async def gemma_chat(question: Question):
     print("ANSWER:", ans)
     return {
         "question": question,
-        "paraphrased_question": ans
+        "answer": ans
     }
 
 
